@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Yandex Node.JS School Test</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/semantic.min.css">
+  <link rel="stylesheet" href="index.css">
+
+</head>
+
+<body class="page">
+  <div class="ui container">
+    <div class="ui grid">
+      <div class="sixteen wide column">
+        <div class="ui segment">
+          <form class="ui form" id="myForm">
+            <div class="field">
+              <label>ФИО</label>
+              <input type="text" name="fio" placeholder="ФИО" required pattern="^([A-Za-zА-Яа-яЁё]+\s?){3}">
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="E-mail">
+            </div>
+            <div class="field">
+              <label>Телефон</label>
+              <input type="tel" name="phone" placeholder="Телефон">
+            </div>
+            <button class="ui button" type="submit" id="submitButton">Отправить</button>
+          </form>
+          <div class="ui dimmer" id="dimmer">
+            <div id="resultContainer">
+              <div class="content">
+                <div class="center">
+                  <h2 class="ui inverted icon header">
+                    <i class="heart icon"></i> Dimmed Message!
+                  </h2>
+                  <p class="ui inverted sub header">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat cumque, ipsam earum voluptatem alias sapiente repellat,
+                    eum voluptas eligendi ratione illo magnam porro voluptatum ducimus cum ex ut eos inventore.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/semantic.min.js"></script>
+  <script src="index.js"></script>
+</body>
+
+</html>
