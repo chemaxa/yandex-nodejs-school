@@ -1,0 +1,27 @@
+{
+  "name": "yandex-nodejs-school",
+  "version": "1.0.0",
+  "description": "Test exercise for yandex node school",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "browser-sync": "^2.18.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chemaxa/yandex-nodejs-school.git"
+  },
+  "author": "Maxim Shkarbalyuk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chemaxa/yandex-nodejs-school/issues"
+  },
+  "homepage": "https://github.com/chemaxa/yandex-nodejs-school#readme"
+}
