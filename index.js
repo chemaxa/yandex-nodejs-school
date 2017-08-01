@@ -1,4 +1,24 @@
 $(() => {
+  class Validator {
+    fio() {
+      return {
+        type: 'fio',
+        regexp: '^([A-Za-zА-Яа-яЁё]+\s?){3}'
+      }
+    }
+    email() {
+      return {
+        type: 'email',
+        regexp: '[0-9._A-Za-zА-Яа-яЁё-]+@((ya|yandex).(ru|com|kz|by|ua))'
+      }
+    }
+    phone() {
+      return {
+        type: 'phone',
+        regexp: '\+7\(\d{3}\)\d{3}-\d{2}-\d{2}'
+      }
+    }
+  }
   class MyForm {
     constructor(form = '#myForm') {
       this.form = document.querySelector(form);
@@ -9,9 +29,16 @@ $(() => {
      * @return {Valid} 
      */
     validate() {
+      let formData = this.getData();
+      let errorFields = [];
+      let isValid = false;
+      let check = ()=>{
+
+      }
+      
       return {
-        isValid: false,
-        errorFields: []
+        isValid,
+        errorFields
       }
     }
     /**
