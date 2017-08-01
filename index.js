@@ -19,7 +19,12 @@ $(() => {
      * @return {FormData}
      */
     getData() {
-      return Object.create({}, this.form.elements)
+      let formData = new FormData(this.form);
+      let tmpData = {};
+      for (let pair of formData.entries()) {
+        tmpData[pair[0]] = pair[1];
+      }
+      return tmpData;
     }
     /**
      * Метод setData принимает объект с данными формы и устанавливает их инпутам формы. 
@@ -42,9 +47,12 @@ $(() => {
     }
     /**
      * Метод sendAjax обеспечивает отправку ajax запроса
+     * @param status - вспомогательный параметр чтобы не поднимать сервер для валидации полей
+     * @param data - данные для отправки
      */
-    sendAjax(data) {
-      $.get('api/success.json', data)
+    sendAjax(data, status = 'success') {
+      console.info(data);
+      $.get(`api/${status}.json`, data)
         .then((response) => {
           console.info(response);
         })
