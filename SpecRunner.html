@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Spec Runner</title>
+  <base href="/" target="">
+  <link rel="stylesheet" type="text/css" href="assets/semantic.min.css">
+  <link rel="stylesheet" href="assets/index.css">
+  <link rel="stylesheet" href="lib/mocha/mocha.css" />
+</head>
+
+<body>
+  <div class="ui container">
+    <div class="ui grid">
+      <div class="sixteen wide column">
+        <form class="ui segment form attached fluid" id="myForm" novalidate>
+          <div class="field">
+            <label>ФИО (Ровно три слова)</label>
+            <input type="text" name="fio" placeholder="ФИО" required pattern="^([A-Za-zА-Яа-яЁё]+\s?){3}">
+          </div>
+          <div class="field">
+            <label>Email (Формат email-адреса, но только в доменах ya.ru, yandex.ru, yandex.ua, yandex.by, yandex.kz, yandex.com)</label>
+            <input type="email" name="email" placeholder="E-mail" required pattern="[0-9._A-Za-zА-Яа-яЁё-]+@((ya|yandex).(ru|com|kz|by|ua))">
+          </div>
+          <div class="field">
+            <label>Телефон (Номер телефона, который начинается на +7, и имеет формат +7(999)999-99-99)</label>
+            <input type="tel" name="phone" placeholder="Телефон" pattern="\+7\(\d{3}\)\d{3}-\d{2}-\d{2}">
+          </div>
+          <button class="ui button" type="submit" id="submitButton">Отправить</button>
+        </form>
+        <div class="ui bottom attached warning message" id="resultContainer">
+          <i class="icon help"></i> Already signed up? <a href="#">Login here</a> instead.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="mocha"></div>
+
+  <script src="assets/js/jquery-3.1.1.min.js"></script>
+  <script src="lib/chai/chai.min.js"></script>
+  <script src="lib/mocha/mocha.min.js"></script>
+  
+  <!-- include source files here... -->
+  <script src="index.js"></script>
+
+  <!-- include spec files here... -->
+  <script src="spec/MyForm.js"></script>
+</body>
+
+</html>
