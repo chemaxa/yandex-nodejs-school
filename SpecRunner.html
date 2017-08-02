@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta charset="utf-8">
+  <title>Spec Runner</title>
   <base href="/" target="">
-  <title>Yandex Node.JS School Test</title>
   <link rel="stylesheet" type="text/css" href="assets/semantic.min.css">
   <link rel="stylesheet" href="assets/index.css">
+  <link rel="stylesheet" href="lib/mocha/mocha.css" />
 </head>
 
 <body class="page">
@@ -17,7 +16,7 @@
       <div class="sixteen wide column">
         <form class="ui segment form attached fluid" id="myForm" novalidate>
           <div class="field">
-            <label>ФИО (Ровно три слова)</label>
+            <label>ФИО (Ровно три слова - progress для проверки статуса прогресса)</label>
             <input type="text" name="fio" placeholder="ФИО" required pattern="^([A-Za-zА-Яа-яЁё]+\s?){3}">
           </div>
           <div class="field">
@@ -34,9 +33,17 @@
       </div>
     </div>
   </div>
+  <div id="mocha"></div>
+
   <script src="assets/js/jquery-3.1.1.min.js"></script>
-  <script src="assets/js/semantic.min.js"></script>
+  <script src="lib/chai/chai.min.js"></script>
+  <script src="lib/mocha/mocha.min.js"></script>
+  
+  <!-- include source files here... -->
   <script src="index.js"></script>
+
+  <!-- include spec files here... -->
+  <script src="spec/MyForm.js"></script>
 </body>
 
 </html>
