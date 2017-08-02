@@ -1,4 +1,8 @@
 $(() => {
+  /**
+   * Класс валидатора
+   * @param {*} Объект с правилами для валидации где field(имя поля), validate() метод для валидации 
+   */
   class Validator {
     constructor(types = {}) {
       this.types = Object.assign(types, {
@@ -29,6 +33,10 @@ $(() => {
         }
       });
     }
+    /**
+     * Метод для валидации данных
+     * @param {object} Объект с данным для валидации в формате имя:значение
+     */
     validate(data) {
       let msg, checker;
       this.errorFields = [];
@@ -50,12 +58,18 @@ $(() => {
       return this.errorFields.length === 0;
     }
   }
+  /**
+   * Класс для работы с формой данных
+   * @param {string} Селектор формы
+   */
   class MyForm {
     constructor(form = '#myForm') {
       this.form = document.querySelector(form);
       this.form.addEventListener('submit', this.submit.bind(this));
-      $(this.form.elements).focus((e) => { e.target.style = '' }); //очищение красной подсветки у инпутов
-      this.reqCounter = 0; // вспомогательная переменная чтобы выйти из "вечного" статуса progress без сервера
+      $(this.form.elements).focus((e) => {
+        e.target.style = '';
+        $(e.target.parentElement.classList.remove('error'));
+      }); //очищение красной подсветки у инпутов
     }
     /**
      * Метод validate возвращает объект с признаком результата валидации (isValid) и массивом названий полей, которые не прошли валидацию (errorFields).
@@ -76,6 +90,7 @@ $(() => {
     highlightErrors({ errorFields }) {
       errorFields.forEach((field) => {
         $(`[name=${field}]`).css({ 'border': '1px solid red' })
+        $(`[name=${field}]`).parent().addClass('error');
       }, this);
     }
     /**
@@ -107,10 +122,14 @@ $(() => {
     submit(e) {
       e.preventDefault();
       let validate = this.validate();
-      console.log(validate);
       this.highlightErrors(this.validate())
       let status = validate.isValid ? 'success' : 'error';
-      this.sendAjax(this.getData(), status);
+      //Вспомогательный код чтобы зайти в статус 'progress' наберите 'progress' в поле ФИО
+      if (validate.isValid && this.getData().fio.includes('progress')) {
+        this.sendAjax(this.getData(), 'progress');
+      } else {
+        this.sendAjax(this.getData(), status);
+      }
     }
     /**
      * Метод message позволяет выводить сообщение для пользователя и выставлять соответсвующие стили элементам
@@ -119,19 +138,20 @@ $(() => {
     message({ status, reason, timeout }) {
       //{"status":"success"} – контейнеру resultContainer должен быть выставлен класс success и добавлено содержимое с текстом "Success"
       if (status === 'success') {
-        $('#resultContainer').addClass('success');
+        $('#resultContainer').removeClass('error progress warning').addClass('success');
         $('#resultContainer').text('Success');
       }
       // {"status":"error","reason":String} - контейнеру resultContainer должен быть выставлен класс error и добавлено содержимое с текстом из поля reason
       else if (status === 'error') {
-        $('#resultContainer').addClass('error');
+        $('#resultContainer').removeClass('success progress warning').addClass('error');
         $('#resultContainer').text(reason);
       }
       // {"status":"progress","timeout":Number} - контейнеру resultContainer должен быть выставлен класс progress  
       // через timeout миллисекунд необходимо повторить запрос (логика должна повторяться, пока в ответе не вернется отличный от progress статус)
       else if (status === 'progress') {
-        $('#resultContainer').addClass('progress');
-        setTimeout(() => { this.sendAjax(this.getData()) }, timeout);
+        $('#resultContainer').removeClass('error success warning').addClass('progress');
+        setTimeout(this.sendAjax.bind(this, this.getData()), timeout);
+        $('#resultContainer').text('Progress');
       }
     }
     /**
@@ -140,19 +160,9 @@ $(() => {
      * @param data - данные для отправки
      */
     sendAjax(data, status = 'success') {
-      console.info(data);
-      // Вспомогательный блок кода чтобы выйти из бесконечного статуса 'progress'
-      if (status === 'progress') {
-        this.reqCounter++
-      }
-      if (this.reqCounter >= 5 && status === 'progress') {
-        status = 'success';
-      }
-      // Конец блока
       let self = this;
       $.get(`api/${status}.json`, data)
         .then((response) => {
-          console.info(response);
           self.message(response);
         })
         .catch((err) => {

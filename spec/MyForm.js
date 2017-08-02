@@ -34,7 +34,7 @@ $(() => {
       it("should be able validate form data", () => {
         let mock = {
           phone: '+7(111)111-62-62',
-          fio: 'Yandex Ya Ya',
+          fio: 'Yandex Ya progress',
           email: 'ya@ya.ru',
         };
         MyForm.setData(mock);
