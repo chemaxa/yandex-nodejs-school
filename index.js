@@ -1,28 +1,60 @@
 $(() => {
   class Validator {
-    fio() {
-      return {
-        type: 'fio',
-        regexp: '^([A-Za-zА-Яа-яЁё]+\s?){3}'
-      }
+    constructor(types = {}) {
+      this.types = Object.assign(types, {
+        fio: {
+          field: 'fio',
+          validate: val => /^([A-Za-zА-Яа-яЁё]+)\s([A-Za-zА-Яа-яЁё]+)\s([A-Za-zА-Яа-яЁё]+)\s?$/i.test(val)
+        },
+        email: {
+          field: 'email',
+          validate: val => /^[0-9._A-Za-zА-Яа-яЁё-]+@((ya|yandex).(ru|com|kz|by|ua))$/i.test(val)
+        },
+        phone: {
+          field: 'phone',
+          validate: (val) => {
+            const YANDEX = 30;
+            let isPhone = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/i.test(val);
+            let sum = 0;
+            if (isPhone) {
+              sum = val
+                .replace(/\+|\(|\)|\-/ig, '')
+                .split('')
+                .reduce((prev, curr) =>
+                  parseInt(prev, 10) + parseInt(curr, 10)
+                );
+            }
+            return isPhone && (sum < 30);
+          }
+        }
+      });
     }
-    email() {
-      return {
-        type: 'email',
-        regexp: '[0-9._A-Za-zА-Яа-яЁё-]+@((ya|yandex).(ru|com|kz|by|ua))'
+    validate(data) {
+      let msg, checker;
+      this.errorFields = [];
+      for (let type in data) {
+        if (data.hasOwnProperty(type)) {
+          checker = this.types[type];
+          if (!checker) {
+            throw {
+              name: `ValidationError`,
+              message: `Нет обработчика для ${type}`
+            };
+          };
+          let isOk = data[type] ? checker.validate(data[type]) : false;
+          if (!isOk) {
+            this.errorFields.push(checker.field);
+          }
+        }
       }
-    }
-    phone() {
-      return {
-        type: 'phone',
-        regexp: '\+7\(\d{3}\)\d{3}-\d{2}-\d{2}'
-      }
+      return this.errorFields.length === 0;
     }
   }
   class MyForm {
     constructor(form = '#myForm') {
       this.form = document.querySelector(form);
       this.form.addEventListener('submit', this.submit.bind(this));
+      $(this.form.elements).focus((e) => { e.target.style = '' });//clear red border after changes 
     }
     /**
      * Метод validate возвращает объект с признаком результата валидации (isValid) и массивом названий полей, которые не прошли валидацию (errorFields).
@@ -30,16 +62,16 @@ $(() => {
      */
     validate() {
       let formData = this.getData();
-      let errorFields = [];
-      let isValid = false;
-      let check = ()=>{
-
-      }
-      
+      let validator = new Validator();
       return {
-        isValid,
-        errorFields
+        isValid: validator.validate(formData),
+        errorFields: validator.errorFields
       }
+    }
+    highlightErrors({ errorFields }) {
+      errorFields.forEach((field) => {
+        $(`[name=${field}]`).css({ 'border': '1px solid red' })
+      }, this);
     }
     /**
      * Метод getData возвращает объект с данными формы, где имена свойств совпадают с именами инпутов.
@@ -70,6 +102,7 @@ $(() => {
     submit(e) {
       e.preventDefault();
       console.log(this.validate())
+      this.highlightErrors(this.validate())
       this.sendAjax(this.getData())
     }
     /**
