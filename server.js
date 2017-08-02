@@ -3,7 +3,7 @@ var bs = require("browser-sync").create();
 
 // Listen to change events on HTML & JS and reload
 bs.watch("*.html").on("change", bs.reload);
-bs.watch("*.js").on("change", bs.reload);
+bs.watch(["*.js","./spec/*.js"]).on("change", bs.reload);
 
 // Provide a callback to capture ALL events to CSS
 // files - then filter for 'change' and reload all
