@@ -54,7 +54,8 @@ $(() => {
     constructor(form = '#myForm') {
       this.form = document.querySelector(form);
       this.form.addEventListener('submit', this.submit.bind(this));
-      $(this.form.elements).focus((e) => { e.target.style = '' });//clear red border after changes 
+      $(this.form.elements).focus((e) => { e.target.style = '' }); //очищение красной подсветки у инпутов
+      this.reqCounter = 0; // вспомогательная переменная чтобы выйти из "вечного" статуса progress без сервера
     }
     /**
      * Метод validate возвращает объект с признаком результата валидации (isValid) и массивом названий полей, которые не прошли валидацию (errorFields).
@@ -68,6 +69,10 @@ $(() => {
         errorFields: validator.errorFields
       }
     }
+    /**
+     * Метод highlightErrors подсвечивает поля которые не прошли валидацию
+     * @param {Valid} Объект с признаком результата валидации (isValid) и массивом названий полей, которые не прошли валидацию (errorFields).
+     */
     highlightErrors({ errorFields }) {
       errorFields.forEach((field) => {
         $(`[name=${field}]`).css({ 'border': '1px solid red' })
@@ -101,9 +106,33 @@ $(() => {
      */
     submit(e) {
       e.preventDefault();
-      console.log(this.validate())
+      let validate = this.validate();
+      console.log(validate);
       this.highlightErrors(this.validate())
-      this.sendAjax(this.getData())
+      let status = validate.isValid ? 'success' : 'error';
+      this.sendAjax(this.getData(), status);
+    }
+    /**
+     * Метод message позволяет выводить сообщение для пользователя и выставлять соответсвующие стили элементам
+     * @param {response} Объект типа response  с ответом сервера включает поля status(string), reason(string), timeout(number) 
+     */
+    message({ status, reason, timeout }) {
+      //{"status":"success"} – контейнеру resultContainer должен быть выставлен класс success и добавлено содержимое с текстом "Success"
+      if (status === 'success') {
+        $('#resultContainer').addClass('success');
+        $('#resultContainer').text('Success');
+      }
+      // {"status":"error","reason":String} - контейнеру resultContainer должен быть выставлен класс error и добавлено содержимое с текстом из поля reason
+      else if (status === 'error') {
+        $('#resultContainer').addClass('error');
+        $('#resultContainer').text(reason);
+      }
+      // {"status":"progress","timeout":Number} - контейнеру resultContainer должен быть выставлен класс progress  
+      // через timeout миллисекунд необходимо повторить запрос (логика должна повторяться, пока в ответе не вернется отличный от progress статус)
+      else if (status === 'progress') {
+        $('#resultContainer').addClass('progress');
+        setTimeout(() => { this.sendAjax(this.getData()) }, timeout);
+      }
     }
     /**
      * Метод sendAjax обеспечивает отправку ajax запроса
@@ -112,12 +141,22 @@ $(() => {
      */
     sendAjax(data, status = 'success') {
       console.info(data);
+      // Вспомогательный блок кода чтобы выйти из бесконечного статуса 'progress'
+      if (status === 'progress') {
+        this.reqCounter++
+      }
+      if (this.reqCounter >= 5 && status === 'progress') {
+        status = 'success';
+      }
+      // Конец блока
+      let self = this;
       $.get(`api/${status}.json`, data)
         .then((response) => {
           console.info(response);
+          self.message(response);
         })
         .catch((err) => {
-          console.info(err);
+          console.error(err);
         });
     }
   }
