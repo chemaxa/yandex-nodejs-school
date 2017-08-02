@@ -30,6 +30,19 @@ $(() => {
         expect(email).to.equal(mock.email);
       });
     });
+    describe("validate", () => {
+      it("should be able validate form data", () => {
+        let mock = {
+          phone: '+7(111)111-62-62',
+          fio: 'Yandex Ya Ya',
+          email: 'ya@ya.ru',
+        };
+        MyForm.setData(mock);
+        let valid = MyForm.validate();
+        assert.isTrue(valid.isValid, 'the data is valid');
+      });
+
+    });
   });
   mocha.run();
 })
