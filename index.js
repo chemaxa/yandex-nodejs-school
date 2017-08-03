@@ -122,8 +122,11 @@ $(() => {
     submit(e) {
       e.preventDefault();
       let validate = this.validate();
-      this.highlightErrors(this.validate())
+      this.highlightErrors(validate);
       let status = validate.isValid ? 'success' : 'error';
+      if (validate.isValid) {
+        $('#submitButton').addClass('disabled');
+      }
       //Вспомогательный код чтобы зайти в статус 'progress' наберите 'progress' в поле ФИО
       if (validate.isValid && this.getData().fio.includes('progress')) {
         this.sendAjax(this.getData(), 'progress');
